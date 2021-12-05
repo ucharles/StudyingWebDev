@@ -56,3 +56,77 @@ route, resource
 HTTP를 통해 접근권한을
 
 npm: UUID, 유니크 아이디를 생성해줌
+
+### 브라우저의 HTML 양식은 GET, POST 요청만 보낼 수 있다?
+
+[stackoverflow](https://stackoverflow.com/questions/16805956/why-dont-browsers-support-put-and-delete-requests-and-when-will-they)<br/>
+정확히는 브라우저는 PUT, DELETE를 지원하지만, HTML이 지원하지 않는 것.<br/>
+예를 들어, 브라우저는 JS로 AJAX를 통해 PUT를 요청할 수 있지만,<br/>
+HTML의 form 으로는 불가능하다.<br/>
+브라우저는 궁극적으로 HATEOAS 클라이언트다?<br/>
+HATEOAS(Hypermedia as Engine of Application State)<br>
+REST API를 사용하는 클라이언트가, 전적으로 서버와 동적인 상호작용이 가능하도록 하는 것.<br/>
+예를 들어, 한 유저의 계좌 정보를 요청하면, 계좌번호와 잔액을 응답한다고 하자.<br>
+HATEOAS를 사용할 경우, 해당 계좌의 상태에 따라 접근 가능한 추가 API들이 links라는 이름으로 제공된다.<br/>
+자신의 상세 정보를 다시 조회한다거나, 예금인출을 하거나, 예금 송금을 한다거나... <br/>
+[HATEOAS란? REST API란?](https://joomn11.tistory.com/26)<br/>
+
+### SQL ? NOSQL ?
+
+NOSQL의 종류<br>
+key:value 방식... Redis, Cassandra
+
+### 왜 데이터베이스를 사용하는가?
+
+데이터의 지속성. <br/>
+우리의 데이터가 없어지지 않고 지속되기를 원함. 저장하고 싶음.<br/>
+데이터베이스는 데이터를 효율적으로 접근하게 하고, 압축하여 더 작은 용량을 차지하게 할 수도 있음.<br/>
+데이터를 정렬해주고, 탐색해주고, 확장이 용이하다<br/>
+
+### BSON
+
+Binary JSON, 몽고는 바이너리로 저장함<br/>
+바이너리로 변환함으로써, 메모리 사용량이 적고 가벼움.<br/>
+JSON은 날짜 타입을 저장할 수 없지만, 몽고는 가능.<br/>
+몽고는 컬렉션을 자동 생성해줌. 좋다.<br/>
+
+Database, Collection, Documents<br>
+Database, Table, Row(Tuple)<br>
+
+### Mongoose
+
+Schema: Document의 형태를 정의. 테이블의 형태를 정의?<br>
+Model: Collection의 이름을 정의. Model을 정의할 때 그 속의 Document의 형태도 정의해야 함. Schema를 이용. <br>
+모델 이름은 다르지만 같은 스키마를 이용하여 정의할 수도 있겠지<br>
+Collection: RDB에선 테이블. Document의 집합.<br>
+Documents: RDB에선 Row, Tuple. element의 집합<br>
+
+<hr>
+ODM(object data mapper), ORM<br/>
+유효성 검사, 스키마 정의, 데이터나 문서를 JS 객체에 매핑할 것.<br/>
+Model: 자바스크립트의 class. 컬렌션의 정보를 구체적으로, 나타내도록 함.<br>
+!!중요!! 모델의 이름은 단수이고, 첫 글자는 대문자<br>
+mongoose는 모델을 복수화 하고 소문자로 만들 것이다.<br>
+Schema: 용어 설명서, 청사진, 게임 계획? DDL?<br>
+Mongo -> JS, 다른 타입으로 가기 위한 콜렉션 키의 매핑<br>
+Mongo의 데이터 타입이 다르고, JS의 데이터 타입이 다르니..<br>
+새 모델로 인스턴스를 만든다는 것은, 객체가 save를 부를 때 까지는 데이터베이스에서 아무것도 할 수가 없다..<br/>
+<hr>
+[mongo 연산자](https://docs.mongodb.com/manual/reference/operator/query/)<br>
+<hr>
+비동기 await와 함께 exec()를 사용해야하는 이유??<br>
+await Model.findOne();<br>
+await Model.findOne().exec();<br>
+위 둘이 수행하는 기능은 동일. 그러나 .exec()는 더 나은 스택 추적(stack trace)?? 을 제공하기 때문에 쓰는게 좋다.<br>
+에러 추적에 관련된 내용인듯.. 예외 상황이 발생했을 때 출력되는 에러메시지가 약간 다름.<br>
+exec()를 쓰면 정확히 어디서 에러가 난건지 집어주는듯. 안쓰면 라이브러리 안에서 에러 지적하고 끝남.<br>
+<hr>
+mongoose의 유효성 검사. Number 타입에 스트링 타입인 '숫자'를 넣으면 에러가 안나네..<br/>
+[Schema type options](https://mongoosejs.com/docs/schematypes.html#schematype-options)
+update할 때도 유효성 검사를 유지하고자 한다면, 3번째 인자에 옵션을 설정해줘야함..<br>
+findOneAndUpdate({찾을 값}, {업데이트 할 값}, {옵션})<br>
+<hr>
+인스턴스 메소드 (Instance Method)[https://mongoosejs.com/docs/guide.html#methods]<br>
+모델의 인스턴스는 도큐먼트이다. 도큐먼트는 자체적인 많은 빌트인 인스턴스 메소드를 갖고 있다.<br>
+또한 커스텀 인스턴스 메소드도 정의할 수 있다.<br>
+인스턴스 메소드는 스키마에서 정의.<br>

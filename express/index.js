@@ -1,7 +1,17 @@
+const mongoose = require("mongoose");
 const express = require("express");
+const methodOverride = require("method-override");
+
+main().catch((err) => console.log(err));
+
+async function main() {
+  await mongoose.connect("mongodb://localhost:27017/test");
+  console.log("mongoose connection open to database: test");
+}
 
 const app = express();
 const port = 3030;
+app.use(methodOverride("_method"));
 
 app.get("/", (req, res) => {
   console.log("root request");
@@ -24,6 +34,14 @@ app.post("/greeting", (req, res) => {
   res.send("post request to greeting");
 });
 
+// app.patch("/comments/:id", (req, res) => {
+//   const { id } = req.params;
+//   const newCommentText = req.body.comment;
+//   const foundComment = comments.find((c) => c.id === id);
+//   foundComment.comment = newCommentText;
+//   res.redirect("/comments");
+// });
+
 app.get("/search", (req, res) => {
   const { q } = req.query;
   if (!q) {
@@ -44,7 +62,7 @@ app.get("*", (req, res) => {
 // });
 
 app.listen(port, () => {
-  console.log("hello world 3030!");
+  console.log(`Connected in port number with express: ${port}!`);
 });
 
 // app.get('/') {
