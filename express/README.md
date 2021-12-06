@@ -100,6 +100,7 @@ Model: Collection의 이름을 정의. Model을 정의할 때 그 속의 Documen
 모델 이름은 다르지만 같은 스키마를 이용하여 정의할 수도 있겠지<br>
 Collection: RDB에선 테이블. Document의 집합.<br>
 Documents: RDB에선 Row, Tuple. element의 집합<br>
+insertMany, 어느 하나가 유효성 검사를 통과하지 못하면, 아무것도 삽입되지 않음. 트랜잭션?<br>
 
 <hr>
 ODM(object data mapper), ORM<br/>
@@ -112,7 +113,9 @@ Mongo -> JS, 다른 타입으로 가기 위한 콜렉션 키의 매핑<br>
 Mongo의 데이터 타입이 다르고, JS의 데이터 타입이 다르니..<br>
 새 모델로 인스턴스를 만든다는 것은, 객체가 save를 부를 때 까지는 데이터베이스에서 아무것도 할 수가 없다..<br/>
 <hr>
+
 [mongo 연산자](https://docs.mongodb.com/manual/reference/operator/query/)<br>
+
 <hr>
 비동기 await와 함께 exec()를 사용해야하는 이유??<br>
 await Model.findOne();<br>
@@ -122,11 +125,34 @@ await Model.findOne().exec();<br>
 exec()를 쓰면 정확히 어디서 에러가 난건지 집어주는듯. 안쓰면 라이브러리 안에서 에러 지적하고 끝남.<br>
 <hr>
 mongoose의 유효성 검사. Number 타입에 스트링 타입인 '숫자'를 넣으면 에러가 안나네..<br/>
-[Schema type options](https://mongoosejs.com/docs/schematypes.html#schematype-options)
+
+[Schema type options](https://mongoosejs.com/docs/schematypes.html#schematype-options)<br/>
 update할 때도 유효성 검사를 유지하고자 한다면, 3번째 인자에 옵션을 설정해줘야함..<br>
 findOneAndUpdate({찾을 값}, {업데이트 할 값}, {옵션})<br>
+runValidators: true<br>
+
 <hr>
-인스턴스 메소드 (Instance Method)[https://mongoosejs.com/docs/guide.html#methods]<br>
+인스턴스 메소드<br/>
+
+[Instance Method](https://mongoosejs.com/docs/guide.html#methods)<br/>
 모델의 인스턴스는 도큐먼트이다. 도큐먼트는 자체적인 많은 빌트인 인스턴스 메소드를 갖고 있다.<br>
 또한 커스텀 인스턴스 메소드도 정의할 수 있다.<br>
 인스턴스 메소드는 스키마에서 정의.<br>
+
+### 미들웨어
+
+mongoose의 어떤 함수를 실행하기 전, 후에 hook 할 수 있음.. 뭔말인가..<br>
+schema.pre(method, function)<br>
+인수 함수는 프로미스를 리턴함. async 붙일 수 있음<br>
+schema.post<br>
+post 요청으로 html body를 받으려면 이하를 추가해야함..<br>
+app.use(
+express.urlencoded({
+extended: true,
+})
+);
+
+### express + mongoose
+
+비동기 라우팅. DB에 데이터를 요청할 땐 응답을 기다릴 필요가 있다.<br>
+render 와 send는 동시에 쓰는게 아님.. internal 에러가 뜨네

@@ -1,6 +1,10 @@
-const mongoose = require("mongoose");
 const express = require("express");
+const mongoose = require("mongoose");
+const app = express();
+const path = require("path");
 const methodOverride = require("method-override");
+
+const Product = require("./schema/product.schema");
 
 main().catch((err) => console.log(err));
 
@@ -9,62 +13,74 @@ async function main() {
   console.log("mongoose connection open to database: test");
 }
 
-const app = express();
-const port = 3030;
+// Middleware
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 app.use(methodOverride("_method"));
 
+// Starting server
+app.listen(3000, () => {
+  console.log("app is listening on port 3000");
+});
+
 app.get("/", (req, res) => {
-  console.log("root request");
-  res.send("<h1>welcome hp</h1>");
+  res.send("<h1>main page</h1>");
 });
 
-app.get("/r/:subreddit/:postId", (req, res) => {
-  const { subreddit, postId } = req.params;
-  console.log(req.params);
-  res.send(`Viewing post id: ${postId}, ${subreddit} subreddit!!`);
+app.get("/products", async (req, res) => {
+  const products = await Product.find({});
+  res.render("products/index", { products });
 });
 
-app.get("/greeting", (req, res) => {
-  console.log("greeting request");
-  res.send("<h1>hello world!!!</h1>");
+app.post("/products", async (req, res) => {
+  // const inputProduct = req.body;
+  // const result = await new Product({
+  //   name: inputProduct.name,
+  //   price: inputProduct.price,
+  //   category: inputProduct.category,
+  // });
+  // result.save();
+  // console.log(result);
+  const newProduct = new Product(req.body);
+  await newProduct.save();
+  console.log(newProduct);
+  res.redirect("products");
 });
 
-app.post("/greeting", (req, res) => {
-  console.log("greeting request post");
-  res.send("post request to greeting");
+app.get("/products/new", (req, res) => {
+  res.render("products/new");
 });
 
-// app.patch("/comments/:id", (req, res) => {
-//   const { id } = req.params;
-//   const newCommentText = req.body.comment;
-//   const foundComment = comments.find((c) => c.id === id);
-//   foundComment.comment = newCommentText;
-//   res.redirect("/comments");
-// });
-
-app.get("/search", (req, res) => {
-  const { q } = req.query;
-  if (!q) {
-    res.send("nothing found search");
-  }
-  res.send(`<h1>${q}</h1>`);
+app.get("/products/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id).catch((e) => {
+    console.log(e);
+    res.send("can not found product");
+  });
+  res.render("products/edit", { product });
 });
 
-app.get("*", (req, res) => {
-  res.send("i don't know that path... please check");
-});
-// get 요청의 가장 아래에 둘 것!!
-
-// app.use((req, res) => {
-//   console.log("we got a new request");
-//   res.send("<h1>hello, thank you for your request</h1>");
-//   // console.dir(req.path);
-// });
-
-app.listen(port, () => {
-  console.log(`Connected in port number with express: ${port}!`);
+app.put("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+    new: true,
+  });
+  await product.save();
+  res.redirect(`/products/${product.id}`);
 });
 
-// app.get('/') {
-
-// }
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id).catch((e) => {
+    console.log(e);
+    res.send("can not found product");
+  });
+  res.render("products/show", { product });
+  // res.render("products/index", { products });
+});

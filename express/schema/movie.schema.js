@@ -28,6 +28,14 @@ movieSchema.methods.greet = function () {
   console.log(`-from ${this.title}`);
 };
 
+movieSchema.pre("save", async () => {
+  console.log("about to save");
+});
+
+movieSchema.post("save", async () => {
+  console.log("just saved!");
+});
+
 const Movie = mongoose.model("Movie", movieSchema);
 
 const findMovie = async () => {
