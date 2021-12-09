@@ -52,4 +52,17 @@ node와 react를 연결하는 방법<br/>
    정적 호스트에서 서빙되는 react SPA (서버측 코드를 실행할 필요가 없음), HTML, JS, CSS를 반환하는 서버.<br/>
 3. node + express 서버가 SSR 페이지를 렌더링하고, react는 페이지의 일부만 제어하는 경우.<br/>
 
-1,2번 모두 논리적으로 분리된 앱이다. node와 react는 물리적으로 같은 서버에 설치할 수 있음.
+1,2번 모두 논리적으로 분리된 앱이다. node와 react는 물리적으로 같은 서버에 설치할 수 있음.<br>
+
+CORS... 서버 헤더에 나오네 이게 무엇인가..<br>
+[교차 출처 리소스 공유(CORS)](https://developer.mozilla.org/ko/docs/Web/HTTP/CORS)<br>
+
+fecth의 순서<br>
+fetch -> fetch의 성공 여부 체크 -> fetch 결과의 json 습득 -> 성공 여부에 따라 에러를 던짐<br>\
+
+앱을 개발하는 순서
+
+1. 아이디어 구상
+2. 디자인 만들기, 스케치 하기
+3. 데이터 모델 구상
+4. 엔드 포인트 구현(API, Backend), 페이지 구현(SPA, Frontend)
