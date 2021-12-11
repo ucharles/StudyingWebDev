@@ -58,11 +58,22 @@ CORS... 서버 헤더에 나오네 이게 무엇인가..<br>
 [교차 출처 리소스 공유(CORS)](https://developer.mozilla.org/ko/docs/Web/HTTP/CORS)<br>
 
 fecth의 순서<br>
-fetch -> fetch의 성공 여부 체크 -> fetch 결과의 json 습득 -> 성공 여부에 따라 에러를 던짐<br>\
+fetch -> fetch의 성공 여부 체크 -> fetch 결과의 json 습득 -> 성공 여부에 따라 에러를 던짐<br>
 
-앱을 개발하는 순서
+앱을 개발하는 순서<br>
 
-1. 아이디어 구상
-2. 디자인 만들기, 스케치 하기
-3. 데이터 모델 구상
-4. 엔드 포인트 구현(API, Backend), 페이지 구현(SPA, Frontend)
+1. 아이디어 구상<br>
+2. 디자인 만들기, 스케치 하기<br>
+3. 데이터 모델 구상<br>
+4. 엔드 포인트 구현(API, Backend), 페이지 구현(SPA, Frontend)<br>
+
+[React + TypeScript](https://freestrokes.tistory.com/159)<br>
+
+리액트에 타입스크립트를 씌워보았다. 정말 하나하나 다 정하지 않으면 에러가 나고 컴파일이 안됨...<br>
+
+1. component의 prop에 타입 지정을 제대로 안한 경우<br>
+2. component에 리턴이 없는데 App에서 component 출력을 한 경우<br>
+
+<hr>
+const [최신 상태 스냅샷, 업데이트할 수 있는 함수] = useState(초기값);
+1. 내부에 저장된(초기값) 상태 데이터를 업데이트.
