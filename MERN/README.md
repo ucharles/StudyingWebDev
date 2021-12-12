@@ -75,5 +75,26 @@ fetch -> fetch의 성공 여부 체크 -> fetch 결과의 json 습득 -> 성공 
 2. component에 리턴이 없는데 App에서 component 출력을 한 경우<br>
 
 <hr>
-const [최신 상태 스냅샷, 업데이트할 수 있는 함수] = useState(초기값);
-1. 내부에 저장된(초기값) 상태 데이터를 업데이트.
+const [최신 상태 스냅샷, 업데이트할 수 있는 함수] = useState(초기값);<br>
+1. 내부에 저장된(초기값) 상태 데이터를 업데이트.<br>
+2. 갱신된 내용만 부분 렌더링.<br>
+
+중첩 라우팅(Nested routes with react router)<br/>
+BrowserRouter: 라우트의 최상위에 위치.<br/>
+Redirect: 보통 최하단에 위치. 세부경로 그 어디에도 해당이 안되는 경우 리다이렉트 가능.<br/>
+Route: 반드시 BrowserRouter 안에 존재해야 함. 라우터의 세부경로 지정 가능. 최상위 Route에 exact를 안 붙이면 분기가 안됨.. 왜지?<br/>
+react-route-dom v6부터는 생략 가능하다고 나와있는데.. 정확히 내용이 뭐지..<br>
+Switch: 라우팅 경로를 IF문처럼 지정 가능.<br/>
+
+코드를 분할하고 구조화 하는 방법은 만드는 사람에게 달려 있음.<br/>
+가장 좋은 방법은 없고 올바른 방법은 없다.<br/>
+하지만 모든 구성 요소가 상대적으로 작고, 집중되고, 세분화된 구조를 갖는 것이 나쁜 경우는 거의 없다.<br/>
+
+props.children<br>
+<부모 요소> {여기가 자식} </부모 요소><br/>
+
+<React.Fragment><br/>
+JS의 한계로, return 값에 할당할 수 있는 것은 단 하나뿐.<br>
+return에 분리된 두 개의 요소가 있으면 syntax error.<br>
+이를 해결하기 위한 react 요소가 react.fragment이다.<br>
+실제로 html에 출력되지는 않음.

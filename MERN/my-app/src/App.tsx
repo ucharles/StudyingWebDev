@@ -16,7 +16,12 @@ const App = () => {
   ]);
 
   const addNewGoalHandler = (newGoal: { id: string; text: string }) => {
-    setCourseGoals(courseGoals.concat(newGoal));
+    // 상태 업데이트가 이전 상태에 의존하지 않는 경우, 아래처럼 사용할 수도 있음.
+    // setCourseGoals(courseGoals.concat(newGoal));
+    // RECOMENDED!! 상태 업데이트가 이전 상태에 의존하는 경우, 아래를 사용하는 게 바람직.
+    setCourseGoals((prevCourseGoals) => {
+      return prevCourseGoals.concat(newGoal);
+    });
   };
 
   return (
