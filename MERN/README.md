@@ -97,4 +97,7 @@ props.children<br>
 JS의 한계로, return 값에 할당할 수 있는 것은 단 하나뿐.<br>
 return에 분리된 두 개의 요소가 있으면 syntax error.<br>
 이를 해결하기 위한 react 요소가 react.fragment이다.<br>
-실제로 html에 출력되지는 않음.
+실제로 html에 출력되지는 않음.<br>
+
+react-router-dom<br>
+useParams() ... URL에서 파라메터 습득 가능<br>
