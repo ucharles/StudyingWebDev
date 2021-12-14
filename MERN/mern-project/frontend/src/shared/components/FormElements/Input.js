@@ -48,7 +48,9 @@ const Input = (props) => {
   };
 
   const touchHandler = () => {
-    dispatch({});
+    dispatch({
+      type: "TOUCH",
+    });
   };
 
   const element =

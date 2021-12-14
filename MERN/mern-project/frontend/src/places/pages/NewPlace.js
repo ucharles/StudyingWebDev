@@ -45,6 +45,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      address: {
+        value: "",
+        isValid: false,
+      },
     },
     isValid: false,
   });
@@ -57,8 +61,13 @@ const NewPlace = () => {
     });
   }, []);
 
+  const placeSubmitHandler = (event) => {
+    event.preventDefault(); // 해당 이벤트에 대한 기본 동작 실행 방지, submit 버튼을 눌러도 새로고침 안됨!
+    console.log(formState.inputs);
+  };
+
   return (
-    <form className="place-form">
+    <form className="place-form" onSubmit={placeSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -76,6 +85,17 @@ const NewPlace = () => {
         errorText="Please enter valid description (at least 5 characters)."
         onInput={inputHandler}
       />
+      <Input
+        id="address"
+        element="input"
+        type="text"
+        label="Address"
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText="Please enter valid Address."
+        // 유효한 주소인지 확인하는 것은 백엔드에서...
+        onInput={inputHandler}
+      />
+
       <Button type="submit" disabled={!formState.isValid}>
         ADD PLACE
       </Button>
