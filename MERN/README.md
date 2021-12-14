@@ -101,3 +101,17 @@ return에 분리된 두 개의 요소가 있으면 syntax error.<br>
 
 react-router-dom<br>
 useParams() ... URL에서 파라메터 습득 가능<br>
+
+event.preventDefault()<br>
+괄호를 안붙이면 새로고침됨..!!<br>
+
+React Hook<br>
+함수형 컴포넌트에서만 사용 가능. 클래스형에선 사용 불가.<br>
+useState, useEffect, useReducer, useRef,<br>
+
+useReducer: useState를 두개 쓰는 대신 사용함.. 좀더 복잡한 상태를 쉽게 관리 가능?
+inter connect state?
+
+useEffect, useCallback -> 공통점, 불필요한 렌더링을 피하기 위해 사용.<br>
+
+JS에서 for는 예약어이므로, JSX에서 for를 쓰고 싶을 땐 htmlFor를 쓰자.<br>
