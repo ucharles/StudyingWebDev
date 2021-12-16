@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // URL에서 ID를 가져올 것이기 때문에 useParams 사용.
 import { useParams } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import Card from "../../shared/components/UIElements/Card";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
   VALIDATOR_MAXLENGTH,
 } from "../../shared/util/validators";
+
+import { useForm } from "../../shared/hooks/form-hook";
+
+import "./PlaceForm.css";
 
 const DUMMY_PLACES = [
   {
@@ -40,19 +45,69 @@ const DUMMY_PLACES = [
 ];
 
 const UpdatePlace = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const placeId = useParams().placeId;
-
+  // Hook은 함수의 최상위에서 call 해야함.
+  // Fetch를 Hook보다 일찍할 순 없음..
+  const [formState, inputHandler, setFormData] = useForm(
+    {
+      title: {
+        value: "",
+        isValid: false,
+      },
+      description: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
+  // hook을 call하고, dummy를 가져옴
   const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  useEffect(() => {
+    if (identifiedPlace) {
+      setFormData(
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true,
+          },
+        },
+        true
+      );
+    }
+
+    setIsLoading(false);
+  }, [setFormData, identifiedPlace]);
+
+  const placeUpdateSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log(formState.inputs);
+  };
 
   if (!identifiedPlace) {
     return (
       <div className="center">
-        <h2>Could not find place!</h2>
+        <Card>
+          <h2>Could not find place!</h2>
+        </Card>
+      </div>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
       </div>
     );
   }
   return (
-    <form className="">
+    <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -60,9 +115,9 @@ const UpdatePlace = () => {
         label="Title"
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please enter a valid title."
-        onInput={() => {}}
-        value={identifiedPlace.title}
-        valid={true}
+        onInput={inputHandler}
+        initialValue={formState.inputs.title.value}
+        initialIsValid={formState.inputs.title.isValid}
       />
       <Input
         id="description"
@@ -70,11 +125,11 @@ const UpdatePlace = () => {
         label="Description"
         validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
         errorText="Please enter a valid Description at least 5 characters."
-        onInput={() => {}}
-        value={identifiedPlace.description}
-        valid={true}
+        onInput={inputHandler}
+        initialValue={formState.inputs.description.value}
+        initialIsValid={formState.inputs.description.isValid}
       />
-      <Button type="submit" disabled={true}>
+      <Button type="submit" disabled={!formState.isValid}>
         UPDATE PLACE
       </Button>
     </form>
