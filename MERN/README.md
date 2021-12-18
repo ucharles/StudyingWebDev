@@ -133,11 +133,44 @@ props를 사용하지 않고 상태를 관리할 수 있다고..?
 
 ---
 
-Node.js
+### Node.js
+
 참고: [Node.js에 관해 후회하는 10가지](https://www.youtube.com/watch?v=M3BM9TB-8yA&t=152s)
 
 왜 노드로만 서버를 만들지 않는가?
+[프레임워크가 없는 Node.js 서버](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Node_server_without_framework)
 response 작업은 request 작업보다 수고가 훨씬 많이 들어감.
 (method가 post인 경우.. if문을 걸어서 어쩌고 저쩌고..)
 이러한 문제를 해결하기 위해 창의적인 해결책을 찾아야함.  
 (솔직히 시간낭비다) => express를 사용하자.
+
+### express
+
+express의 핵심 철학! 미들웨어!  
+모든 요청은 미들웨어 기능을 통해 전달된다. (GET, POST, ...)
+
+const app = express();
+app.xxx <- 이거 하나하나를 미들웨어라고 하는것 같다.
+미들웨어란: A function that gets a request and may return a response  
+(or edit request or response and move on to the next middleware)  
+미들웨어는 함수다. 요청을 get 하고 응답을 return함.
+
+Node.js는 서버가 실행될 때 모든 스크립트를 구동하고, 모든 미들웨어의 포인터를 메모리에 등록함.
+
+express middleware 함수는 언제 실행되느냐?
+요청이 미들웨어 함수에 도달할 때마다.
+
+[import 와 require의 차이](https://qiita.com/minato-naka/items/39ecc285d1e37226a283)
+한마디로 정리하면 브라우저용(ES6)과 서버용(node.js).  
+import를 server에서 쓰고 싶으면 Webpack? 같은 걸 사용해야 한다고 함.
+nest.js 같은 경우는 import 사용 가능.
+
+---
+
+### 유효성 검사 (Validation)는 언제 해야하는가?
+
+유효하지 않은 값이라는 걸 어떻게 사용자에게 알릴 것인가?
+
+1. 프론트 엔드 (POST로 데이터를 서버에 보내기 전에)
+2. 백엔드 (프론트로부터 데이터를 받았을 때)
+3. DB 삽입 전 ()
