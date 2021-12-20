@@ -45,7 +45,7 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ userPlaces }); // => {place} => {place: place}
 };
 
-const getPlaces = async (req, res, next) => {
+const getPlaces = (req, res, next) => {
   res.json({ DUMMY_PLACES }); // => {place} => {place: place}
 };
 
