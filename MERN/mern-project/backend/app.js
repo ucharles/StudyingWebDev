@@ -8,6 +8,8 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
+const uri = "mongodb://localhost:27017/mern-project";
+
 app.use(bodyParser.json());
 
 app.use("/api/places", placesRoutes);
@@ -31,7 +33,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/mern-project")
+  .connect(uri)
   .then(() => {
     app.listen(5000);
   })

@@ -3,6 +3,8 @@ const { validationResult } = require("express-validator");
 
 const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place-model");
+const User = require("../models/user-model");
+const mongoose = require("mongoose");
 
 const getPlacesById = async (req, res, next) => {
   const placeId = req.params.pid;
@@ -37,37 +39,47 @@ const getPlacesById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  let userPlaces;
+  // let userPlaces;
+  let userWithPlaces;
   try {
-    userPlaces = await Place.find({ creator: userId }).exec();
+    userWithPlaces = await User.findById(userId).populate("places").exec();
     // 찾으려는 오브젝트를 할당해야함!
   } catch (err) {
     const error = new HttpError("fetching places failed...", 500);
     return next(error);
   }
 
-  if (!userPlaces || userPlaces.length === 0) {
+  if (!userWithPlaces || userWithPlaces.places.length === 0) {
     return next(
       new HttpError("Could not find places for the privided id", 404)
     ); // will be trigger: error handling middleware
     // throw로 처리할 경우 다음 처리가 취소됨. next()는 취소되지 않아서 return이 필요함.
   }
   res.json({
-    places: userPlaces.map((place) => place.toObject({ getters: true })),
+    places: userWithPlaces.places.map((place) =>
+      place.toObject({ getters: true })
+    ),
   }); // => {place} => {place: place}
 };
 
-const getPlaces = (req, res, next) => {
-  res.json({ DUMMY_PLACES }); // => {place} => {place: place}
+const getPlaces = async (req, res, next) => {
+  let places;
+  try {
+    places = await Place.find().exec();
+  } catch (err) {
+    const error = new HttpError("could not found places", 500);
+    return next(error);
+  }
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  }); // => {place} => {place: place}
 };
 
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    // 비동기 코드는 throw가 올바르게 작동하지 않는다. next를 사용할 것.
-    // throw new HttpError("invalid input passed, plz check your data", 422);
     return next(
-      new HttpError("invalid input passed, plz check your data", 422)
+      new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
 
@@ -77,23 +89,48 @@ const createPlace = async (req, res, next) => {
   try {
     coordinates = await getCoordsForAddress(address);
   } catch (error) {
-    console.log(error);
     return next(error);
   }
 
-  // const title = req.body.title;
   const createdPlace = new Place({
     title,
     description,
     address,
     location: coordinates,
-    image: "https://en.wikipedia.org/wiki/File:Place_des_Jacobins.jpeg",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg",
     creator,
   });
 
+  let user;
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
   } catch (err) {
+    const error = new HttpError("Creating place failed, please try again", 500);
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("Could not find user for provided id", 404);
+    return next(error);
+  }
+
+  console.log(user);
+
+  // 로컬 DB 사용, 강의 내용대로 따라하면... 에러가 뜸
+  // Transaction numbers are only allowed on a replica set member or mongos
+  // 로컬 DB면 트랜잭션이 필요 없다는데...? Mongo atlas 쓸때만 필요한가..?
+  try {
+    const sess = await mongoose.startSession();
+
+    await sess.withTransaction(async () => {
+      await createdPlace.save();
+      user.places.push(createdPlace);
+      await user.save();
+    });
+    sess.endSession();
+  } catch (err) {
+    console.log(err);
     const error = new HttpError(
       "Creating place failed, please try again.",
       500
@@ -145,14 +182,27 @@ const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
   let place;
   try {
-    place = await Place.findById(placeId);
+    // populate: 컬렉션 간 연결(ref)이 있는 경우에만 사용 가능
+    place = await Place.findById(placeId).populate("creator").exec();
   } catch (err) {
     const error = new HttpError("cant not found place by id", 500);
     return next(error);
   }
 
+  if (!place) {
+    const error = new HttpError("Could not find place for this id.", 404);
+    return next(error);
+  }
+
   try {
-    await place.remove();
+    const sess = await mongoose.startSession();
+    await sess.withTransaction(async () => {
+      await place.remove();
+      // place -> place의 creator -> creator에 연결된 user의 places -> 제거
+      place.creator.places.pull(place);
+      await place.creator.save();
+    });
+    sess.endSession();
   } catch (err) {
     const error = new HttpError(
       "cant not found place by id, cant delete place.",
