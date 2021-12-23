@@ -33,10 +33,10 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/places/new">
+        <Route path="/places/new" exact>
           <NewPlace />
         </Route>
-        <Route path="/:uid/places">
+        <Route path="/:uid/places" exact>
           <UserPlaces />
         </Route>
         <Route path="/places/:placeId">
@@ -54,11 +54,11 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
+        <Route path="/:uid/places" exact>
+          <UserPlaces />
+        </Route>
         <Route path="/auth">
           <Auth />
-        </Route>
-        <Route path="/:uid/places">
-          <UserPlaces />
         </Route>
         <Redirect to="/auth" />
       </Switch>
