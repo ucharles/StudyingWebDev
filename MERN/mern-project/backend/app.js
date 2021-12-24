@@ -12,6 +12,18 @@ const uri = "mongodb://localhost:27017/mern-project";
 
 app.use(bodyParser.json());
 
+// CORS
+app.use((req, res, next) => {
+  // 접근 가능한 도메인 제한
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Request-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
+
 app.use("/api/places", placesRoutes);
 app.use("/api/users", usersRoutes);
 

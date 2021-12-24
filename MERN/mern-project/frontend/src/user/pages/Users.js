@@ -1,32 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import UsersList from "../components/UsersList";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 const Users = () => {
-  const USERS = [
-    {
-      id: "123",
-      name: "White Mage",
-      image:
-        "https://d2jzgjupsopjbp.cloudfront.net/client_info/SQEX_ESTORE/itemimage/MWFF140560_3/ITEM_IMAGE2.jpg",
-      places: 3,
-    },
-    {
-      id: "124",
-      name: "Scholar",
-      image:
-        "https://d2jzgjupsopjbp.cloudfront.net/client_info/SQEX_ESTORE/itemimage/MWFF140559_2/ITEM_IMAGE2.jpg",
-      places: 2,
-    },
-    {
-      id: "125",
-      name: "Astrologian",
-      image:
-        "https://d2jzgjupsopjbp.cloudfront.net/client_info/SQEX_ESTORE/itemimage/MWFF140561_1/ITEM_IMAGE2.jpg",
-      places: 1,
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const [loadedUsers, setLoadedUsers] = useState();
 
-  return <UsersList items={USERS} />;
+  // useEffect에 직접 async, await를 씌우는 게 좋은 방법은 아님..
+  useEffect(() => {
+    // default is GET method
+    const sendRequest = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("http://localhost:5000/api/users");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+
+        setLoadedUsers(responseData.users);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        setError(err.message);
+      }
+    };
+    sendRequest();
+  }, []);
+
+  const errorHandler = () => {
+    setError(null);
+  };
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={errorHandler} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+    </React.Fragment>
+  );
 };
 
 export default Users;

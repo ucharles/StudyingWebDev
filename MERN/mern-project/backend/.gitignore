@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 #API key
-.env
+.env*
 /util/location.js

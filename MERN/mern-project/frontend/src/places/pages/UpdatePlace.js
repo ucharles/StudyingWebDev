@@ -8,7 +8,6 @@ import Card from "../../shared/components/UIElements/Card";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_MAXLENGTH,
 } from "../../shared/util/validators";
 
 import { useForm } from "../../shared/hooks/form-hook";
