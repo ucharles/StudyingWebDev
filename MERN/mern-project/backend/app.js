@@ -45,7 +45,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(uri)
+  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     app.listen(5000);
   })

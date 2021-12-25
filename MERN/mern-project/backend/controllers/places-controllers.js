@@ -77,11 +77,15 @@ const getPlaces = async (req, res, next) => {
 };
 
 const createPlace = async (req, res, next) => {
+  console.log(req.body);
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+    const error = new HttpError(
+      "Invalid inputs passed, please check your data.",
+      422
     );
+    return next(error);
   }
 
   const { title, description, address, creator } = req.body;
@@ -123,11 +127,10 @@ const createPlace = async (req, res, next) => {
   // 로컬 DB면 트랜잭션이 필요 없다는데...? Mongo atlas 쓸때만 필요한가..?
   try {
     const sess = await mongoose.startSession();
-
     await sess.withTransaction(async () => {
-      await createdPlace.save();
+      await createdPlace.save({ session: sess });
       user.places.push(createdPlace);
-      await user.save();
+      await user.save({ session: sess });
     });
     sess.endSession();
   } catch (err) {
@@ -145,8 +148,9 @@ const createPlace = async (req, res, next) => {
 const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
-    throw new HttpError("invalid input passed, plz check your data", 422);
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
   }
 
   const { title, description } = req.body;
