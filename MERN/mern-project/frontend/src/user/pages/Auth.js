@@ -78,7 +78,11 @@ const Auth = () => {
           }
         );
         // 로딩이 끝난 후 리다이렉트 해야함
-        auth.login(responseData.user.id, responseData.user.username);
+        auth.login(
+          responseData.userId,
+          responseData.username,
+          responseData.token
+        );
       } catch (err) {}
     } else {
       try {
@@ -95,7 +99,11 @@ const Auth = () => {
           formData // FormData를 사용하는 경우, 헤더는 fetch API가 자동적으로 추가해 줌.
         );
         // 로딩이 끝난 후 리다이렉트 해야함
-        auth.login(responseData.user.id, responseData.user.username);
+        auth.login(
+          responseData.userId,
+          responseData.username,
+          responseData.token
+        );
       } catch (err) {}
     }
   };
