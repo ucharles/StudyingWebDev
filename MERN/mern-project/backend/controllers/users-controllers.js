@@ -47,7 +47,6 @@ const signup = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors);
     return next(
       new HttpError("invalid input passed, plz check your data", 422)
     );
@@ -74,8 +73,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     username,
     email,
-    image:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+    image: req.file.path,
     password,
     places: [],
   });

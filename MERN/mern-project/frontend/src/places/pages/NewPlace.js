@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 import {
@@ -10,8 +11,8 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
-import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import "./PlaceForm.css";
 
 const NewPlace = () => {
@@ -23,12 +24,16 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
-      discription: {
+      description: {
         value: "",
         isValid: false,
       },
       address: {
         value: "",
+        isValid: false,
+      },
+      image: {
+        value: null,
         isValid: false,
       },
     },
@@ -40,17 +45,14 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault(); // 해당 이벤트에 대한 기본 동작 실행 방지, submit 버튼을 눌러도 새로고침 안됨!
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.discription.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        { "Content-Type": "application/json" }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+
+      await sendRequest("http://localhost:5000/api/places", "POST", formData);
       // history.push(`/${auth.userId}/places`);
       history.push("/");
       // Redirect the user to a different page
@@ -72,10 +74,10 @@ const NewPlace = () => {
           onInput={inputHandler}
         />
         <Input
-          id="discription"
+          id="description"
           element="textarea"
           label="Description"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+          validators={[VALIDATOR_MINLENGTH(5)]}
           errorText="Please enter valid description (at least 5 characters)."
           onInput={inputHandler}
         />
@@ -89,7 +91,11 @@ const NewPlace = () => {
           // 유효한 주소인지 확인하는 것은 백엔드에서...
           onInput={inputHandler}
         />
-
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image."
+        />
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE
         </Button>

@@ -25,3 +25,5 @@ yarn-error.log*
 #API key
 .env*
 /util/location.js
+
+/uploads

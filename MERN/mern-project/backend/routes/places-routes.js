@@ -2,6 +2,7 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const placesControllers = require("../controllers/places-controllers");
+const fileUpload = require("../middleware/file-upload");
 
 // Router() ... HTTP 메소드에 의해 필터링된, 미들웨어를 등록할 수 있는 특별한 객체를 제공.
 const router = express.Router();
@@ -22,10 +23,9 @@ router.patch(
   placesControllers.updatePlaceById
 );
 
-router.delete("/:pid", placesControllers.deletePlace);
-
 router.post(
   "/",
+  fileUpload.single("image"),
   [
     check("title").trim().not().isEmpty(),
     check("description").trim().isLength({ min: 5 }),
@@ -33,6 +33,8 @@ router.post(
   ],
   placesControllers.createPlace
 );
+
+router.delete("/:pid", placesControllers.deletePlace);
 
 module.exports = router;
 // router를 export 할 수 있다!

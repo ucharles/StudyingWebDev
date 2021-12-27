@@ -17,6 +17,7 @@
     "mongodb": "^4.2.2",
     "mongoose": "^5.11.3",
     "mongoose-unique-validator": "^2.0.3",
+    "multer": "^1.4.4",
     "run-rs": "^0.7.5",
     "uuid": "^8.3.2"
   }
