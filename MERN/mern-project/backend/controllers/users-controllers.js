@@ -6,6 +6,9 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models/user-model");
 
+const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY;
+const JWT_EXPIRES = process.env.JWT_EXPIRES;
+
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -62,8 +65,8 @@ const login = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: existingUser.id, email: existingUser.email },
-      process.env.JWT_PRIVATE_KEY,
-      { expiresIn: "1h" }
+      JWT_PRIVATE_KEY,
+      { expiresIn: JWT_EXPIRES }
     );
   } catch (err) {
     const error = new HttpError(
@@ -139,8 +142,8 @@ const signup = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: createdUser.id, email: createdUser.email },
-      process.env.JWT_PRIVATE_KEY,
-      { expiresIn: "1h" }
+      JWT_PRIVATE_KEY,
+      { expiresIn: JWT_EXPIRES }
     );
   } catch (err) {
     const error = new HttpError("Signing up falied, please try again.", 500);

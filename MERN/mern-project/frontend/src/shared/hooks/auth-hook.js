@@ -48,7 +48,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     // 토큰이 만료되었는지 확인하는 로직이 들어가야 함
-    const storedData = JSON.parse(localStorage.getItem("useData"));
+    const storedData = JSON.parse(localStorage.getItem("userData"));
     if (
       storedData &&
       storedData.token &&
