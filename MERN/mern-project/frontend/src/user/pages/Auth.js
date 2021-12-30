@@ -67,7 +67,7 @@ const Auth = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          `${process.env.REACT_APP_BACKEND_URL}/users/login`,
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
@@ -94,7 +94,7 @@ const Auth = () => {
         formData.append("image", formState.inputs.image.value);
 
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
           "POST",
           formData // FormData를 사용하는 경우, 헤더는 fetch API가 자동적으로 추가해 줌.
         );

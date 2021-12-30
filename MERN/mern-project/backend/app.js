@@ -13,7 +13,7 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
-const uri = "mongodb://localhost:27017/mern-project";
+const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.wpei7.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 
 app.use(bodyParser.json());
 
@@ -24,7 +24,7 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 // CORS
 app.use((req, res, next) => {
   // 접근 가능한 도메인 제한
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Request-With, Content-Type, Accept, Authorization"

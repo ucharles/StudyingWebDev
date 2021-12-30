@@ -25,5 +25,6 @@ yarn-error.log*
 #API key
 .env*
 /util/location.js
+nodemon.json
 
 /uploads

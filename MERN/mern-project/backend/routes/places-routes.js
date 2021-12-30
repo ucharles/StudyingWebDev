@@ -12,6 +12,7 @@ const router = express.Router();
 router.get("/:pid", placesControllers.getPlacesById);
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
 
+// jwt 토큰 인증
 router.use(checkAuth);
 
 router.get("/", placesControllers.getPlaces);
