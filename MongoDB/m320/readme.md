@@ -216,3 +216,115 @@ Bucket Pattern에서는 열 기반 데이터를 모델링.
 - 데이터를 쉬운 가지치기로 다루기 좋게 만든다
 - 정확히 디자인 되지 않은 경우, 처참한 쿼리를 발생시킬 수 있다
 - BI(Business Intelligence) Tool 보다 덜 친화적임(쿼리를 이해해야 하기 때문)
+
+### Schema Versioning Pattern
+
+스키마 업그레이드를 수행하는 동안 가동 중지 시간을 피할 수 있는 좋은 패턴.
+
+해결하고자 하는 문제
+
+- 중단 시간을 피하고 싶음: 스키마를 업그레이드 하는 동안에.
+- 모든 문서를 업데이트 할 경우(특히 빅데이터), 한 시간, 하루, 심지어 몇 주가 걸릴 수 있다.
+- 모든 문서를 업데이트 하고 싶지 않을 때
+
+해결책
+
+- 각 문서는 "schema_version" 필드를 갖는다. (권장, 필수는 아님)
+- 애플리케이션은 모든 schema version을 다룰 수 있다.
+- 문서 마이그레이션 전략을 세운다.
+
+사용예
+
+- 데이터베이스를 사용하는 모든 애플리케이션은 프로덕션에 배포되고, 많이 사용된다.
+- 레거시 데이터가 많은 시스템
+
+장점과 단점
+
+- 다운타임이 필요 없음
+- 마이그레이션을 통제 가능
+- 미래의 기술 부채가 적다(less)
+- 같은 필드에 인덱스가 2개 필요할 수 있음. 마이그레이션 기간 동안.
+
+### Tree Pattern
+
+가장 중요한 것은 애플리케이션에서 어떤 작업을 많이 수행하는지이다.
+이것을 파악한 후에 패턴을 정해야할 것.
+
+같은 필드의 노드 사이에서 종속성 및 계층 구조를 나타내야 하는 경우, 트리 패턴을 사용한다.
+hierarchical(계층 구조)
+ancestor(조상, 부모 포함)
+immediate parent, child(직계 부모, 자식)
+
+트리 구조를 나타내기 위해 이하의 패턴을 제공한다.
+
+- Parent References(상위 참조)
+- Child References(하위 참조)
+  - 참조하는 곳이 하위 노드인 문서
+- Array of Ancestors
+- Materialized Paths
+
+- Parent References(상위 참조)
+
+  - 참조하는 곳이 상위 노드인 문서
+
+  aggregation pipelined을 사용하여 모든 부모를 수집할 수 있다.
+
+  적합한 질의
+  Who reports to Y? (상위 개체가 어디인가)
+  Change all categories under N to under P (상위개체가 N인 것~상위개체가 P인 것)
+
+- Child References (하위 참조)
+
+  - 참조하는 곳이 하위 노드인 문서
+
+  적합한 질의
+  Find all nodes that are under Z?
+
+- Array of Ancestors
+
+  - 모든 직계 조상을 배열로 갖는 문서(부모 포함)
+
+  적합한 질의
+  Who are the ancestors of node X?
+  Who reports to Y?
+
+- Materialized Path (구체화된 경로)
+
+  - 조상 문자열이 문서 안에 존재(예: .최상위.차상위.상위)
+    단일 정규식이 사용 가능하다는 장점이 있음.
+
+  적합한 질의
+  Who are the ancestors of node X?
+
+  적합하지 않은 질의
+  Who reports to Y?
+  : 간단한 쿼리이지만 효율적이지 않음. 인덱스를 사용하지 않으면 root(최상위 노드)에서 full branch matching이 일어남. (Full scan)
+  Find all nodes that are under Z?
+  : 위의 질의와 같은 문제를 겪을 것(인덱스가 없을 경우 풀스캔이 일어남)
+  Change all categories under N to under P
+  : 노드 이동은 매우 어려울 수 있다. 이동하는 노드에 따라, 계층 체인 안의 후속 노드의 보고에 따라.
+
+해결하고자 하는 것
+
+- 계층적 구조의 표현
+- 트리를 탐색하는 다른 접근 패턴
+- 일반적인 작업을 위한 최적화된 모델의 제공
+
+사용예
+
+- 조직도
+- 제품 카테고리
+
+장점과 단점
+
+- Child Reference
+  자식 노드 or 트리에 찾아가기 쉬움. 내림차순 접근 패턴.
+
+- Parent Reference
+  직계 부모를 알 수 있고, 트리 업데이트 가능. 오름차순 접근 패턴.
+
+- Array of ancestors
+  조상 경로를 따라 위쪽으로 이동함. 노드 자체까지의 트리 구조 분기의 전체 보기에 적합.
+
+- Materialized Path
+  트리에서 노드를 검색할 때 정규식 사용 가능.
